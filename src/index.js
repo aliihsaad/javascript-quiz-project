@@ -146,5 +146,20 @@ document.addEventListener("DOMContentLoaded", () => {
     endView.style.display = "flex";
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${quiz.questions.length} correct answers!`;
   }
+
+  timer = setInterval(function() {
+    quiz.timeRemaining = quiz.timeRemaining - 1;
+
+    const minutes = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+    const seconds = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+    timeRemainingContainer.innerText = `${minutes}:${seconds}`;
+
+    if (quiz.timeRemaining <= 0) {
+      clearInterval(timer);
+      showResults();
+    }
+  }, 1000);
   
 });
+
+
