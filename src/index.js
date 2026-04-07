@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const questionContainer = document.querySelector("#question");
   const choiceContainer = document.querySelector("#choices");
   const nextButton = document.querySelector("#nextButton");
+  
 
   // End view elements
   const resultContainer = document.querySelector("#result");
-
 
   /************  SET VISIBILITY OF VIEWS  ************/
 
@@ -65,6 +65,45 @@ document.addEventListener("DOMContentLoaded", () => {
   /************  EVENT LISTENERS  ************/
 
   nextButton.addEventListener("click", nextButtonHandler);
+
+
+  // (Day 3) - restart button event listener
+  const restartButton = document.getElementById("restartButton");
+  restartButton.addEventListener("click", function() {
+        // Hide the end view and show the quiz view again
+    endView.style.display = "none";
+    quizView.style.display = "block";
+ 
+    // Reset the quiz state
+    quiz.currentQuestionIndex = 0;
+    quiz.correctAnswers = 0;
+    quiz.shuffleQuestions();
+ 
+    //  (Day 4) — reset the time back to the full duration
+    quiz.timeRemaining = quiz.timeLimit;
+ 
+    // Update the timer display to show full time again
+    const mins = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+    const secs = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+    timeRemainingContainer.innerText = `${mins}:${secs}`;
+ 
+    //  (Day 4) — stop the old timer, then start a fresh one
+    clearInterval(timer);
+    timer = setInterval(function() {
+      quiz.timeRemaining = quiz.timeRemaining - 1;
+ 
+      const mins = Math.floor(quiz.timeRemaining / 60).toString().padStart(2, "0");
+      const secs = (quiz.timeRemaining % 60).toString().padStart(2, "0");
+      timeRemainingContainer.innerText = `${mins}:${secs}`;
+ 
+      if (quiz.timeRemaining <= 0) {
+        clearInterval(timer);
+        showResults();
+      }
+    }, 1000);
+ 
+    showQuestion();
+  });
 
 
 
@@ -142,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   function showResults() {
+    clearInterval(timer);
     quizView.style.display = "none";
     endView.style.display = "flex";
     resultContainer.innerText = `You scored ${quiz.correctAnswers} out of ${quiz.questions.length} correct answers!`;
